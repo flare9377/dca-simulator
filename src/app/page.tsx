@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Plus, RefreshCw, Trash2 } from "lucide-react";
+import { LogOut, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { Pie, PieChart, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line, Legend } from "recharts";
 import clsx from "clsx";
 
@@ -596,6 +596,15 @@ const colors = ["#0ea5e9", "#8b5cf6", "#10b981", "#f59e0b", "#ef4444"];
             <h1 className="text-2xl font-semibold tracking-tight">DCA Portfolio</h1>
           </div>
           <div className="flex items-center gap-2">
+            <form action="/api/auth/logout" method="post">
+              <button
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm hover:bg-zinc-900"
+                type="submit"
+              >
+                <LogOut size={16} />
+                로그아웃
+              </button>
+            </form>
             <button
               className="inline-flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-sm hover:bg-zinc-900"
               onClick={() => void refreshAll()}
