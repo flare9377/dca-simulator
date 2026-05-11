@@ -1,21 +1,23 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const adapter =
-  process.env.DATABASE_URL
-    ? new PrismaBetterSqlite3({ url: process.env.DATABASE_URL })
-    : null;
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to connect to Postgres.");
+}
+
+const adapter = new PrismaPg({ connectionString });
 
 export const prisma: PrismaClient =
   globalThis.prisma ??
   new PrismaClient({
-    ...(adapter ? { adapter } : {}),
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
 if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
-

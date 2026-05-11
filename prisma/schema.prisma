@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 enum AssetType {
@@ -99,4 +99,3 @@ model PortfolioSnapshot {
 
   @@index([timestamp])
 }
-

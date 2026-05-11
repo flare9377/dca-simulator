@@ -1,15 +1,14 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const adapter = process.env.DATABASE_URL
-  ? new PrismaBetterSqlite3({ url: process.env.DATABASE_URL })
-  : null;
+const connectionString = process.env.DATABASE_URL;
 
-if (!adapter) {
-  throw new Error("DATABASE_URL is required for seeding (e.g. file:./dev.db).");
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required for seeding.");
 }
 
+const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -66,4 +65,3 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
-
