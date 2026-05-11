@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum AssetType {
+  crypto
+  stock
+  etf
+  cash
+}
+
+enum TransactionType {
+  buy
+  sell
+}
+
+enum Currency {
+  USD
+  KRW
+}
+
+enum PriceSource {
+  coingecko
+  manual
+  last_known
+}
+
+model Asset {
+  id         String   @id @default(cuid())
+  symbol     String   @unique
+  name       String
+  assetType  AssetType
+  currency   Currency
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  transactions   Transaction[]
+  priceSnapshots PriceSnapshot[]
+
+  @@index([assetType])
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  assetId         String
+  transactionType TransactionType
+  date            DateTime
+
+  /// Unit price in `currency` per 1 unit of asset.
+  price           Decimal
+  quantity        Decimal
+  /// Fee amount in `currency`.
+  fee             Decimal @default(0)
+  currency        Currency
+  memo            String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId, date])
+}
+
+model PriceSnapshot {
+  id        String      @id @default(cuid())
+  assetId   String
+  price     Decimal
+  currency  Currency
+  source    PriceSource
+  timestamp DateTime    @default(now())
+
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId, timestamp])
+}
+
+model ExchangeRate {
+  id            String   @id @default(cuid())
+  baseCurrency  Currency
+  quoteCurrency Currency
+  rate          Decimal
+  timestamp     DateTime @default(now())
+
+  @@unique([baseCurrency, quoteCurrency, timestamp])
+}
+
+model PortfolioSnapshot {
+  id              String   @id @default(cuid())
+  totalInvested   Decimal
+  totalValue      Decimal
+  totalPnl        Decimal
+  totalReturnRate Decimal
+  timestamp       DateTime @default(now())
+
+  @@index([timestamp])
+}
+
