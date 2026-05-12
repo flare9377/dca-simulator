@@ -1,6 +1,6 @@
 export const SESSION_COOKIE_NAME = "dca_session";
 
-const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 const encoder = new TextEncoder();
 
 function getAuthSecret() {
